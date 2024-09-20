@@ -13,98 +13,116 @@
             height: 100vh;
         }
 
-        .header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin:0;
-            height: 30%;
-            margin-top: 10%;
-        }
-
-        .main-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content:space-between;
-            height: 100vh;
-        }
-/* 
-        .explication {
-            margin-bottom: 200px;
-        } */
-
-        h1 {
-            color: #fff;
-            /* margin: 20px; */
-            font-size: 90px;
-            margin: 0px;
-            text-align: center;
-            /* Poppins extrabold */
-            font-family: 'Poppins', sans-serif;
-            /* extrabold */
-            font-weight: 800;
-            color: #D97800;
-            /* font color */
-        }
-
-        h2 {
-            color: #fff;
-        }
-
-        .texte {
-            color: #fff;
-            font-size: 30px;
-            /* center text */
-            margin: 0px 30px;
-            text-align: center;
-            /* Poppins light */
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
-            color: #fff;
-        }
-
-        .explication {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-            /* width: 100% if screen < 600 px large 600px if not */
-            height: 15%;
-        }
-
-        .carte{
-            height: 25%;
-        }
-
-        .logo{
-            height: 65%;
-        }
-
-        .nom{
-            height: 35%;
-        }
-
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="header">
-            <img class="logo" src="dist/Absolut-Unit-logo-design-without-bar-blanc-png.png" alt="">
-            <img class="nom" src="dist/Absolut Unit écriture png.png" alt="">
-        </div>
-        <!-- <h2>Carte Certif</h2>
-        <p>Notre première certification : "100KG Bench"</p> -->
-        <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.2/build/spline-viewer.js"></script>
-        <spline-viewer class="carte" url="https://prod.spline.design/S28sCPWzmVINH4hu/scene.splinecode"></spline-viewer>
-        <div class="explication">
-            <!-- <h1>Bientôt disponible</h1> -->
-            <p class="texte">
-                Le 100KG au bench est réussi ou vous en êtes pas loin ? La carte certification certifiant votre exploit
-                arrive bientôt !
-            </p>
-        </div>
-    </div>
+    <script type="module">
+        // Importation de Three.js en tant que module
+        import * as THREE from 'https://unpkg.com/three@0.153.0/build/three.module.js';
+
+        // Initialisation de la scène, de la caméra et du rendu
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x33333A); // Fond de la même couleur que le body
+
+        const camera = new THREE.PerspectiveCamera(
+            75, window.innerWidth / window.innerHeight, 0.1, 5000
+        );
+        camera.position.z = 900;
+
+        // const container = document.querySelector('.carte3D');
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        // renderer.setSize(container.clientWidth, container.clientHeight);
+        // container.appendChild(renderer.domElement);
+
+        // Ajout de lumières pour l'effet métallique
+        const ambientLight = new THREE.AmbientLight(0x33333A, 2);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(0, 1, 1);
+        scene.add(directionalLight);
+
+        // Chargement de la carte d'environnement
+        const loader = new THREE.CubeTextureLoader();
+        const environmentMap = loader.load([
+            'https://threejs.org/examples/textures/cube/Bridge2/posx.jpg',
+            'https://threejs.org/examples/textures/cube/Bridge2/negx.jpg',
+            'https://threejs.org/examples/textures/cube/Bridge2/posy.jpg',
+            'https://threejs.org/examples/textures/cube/Bridge2/negy.jpg',
+            'https://threejs.org/examples/textures/cube/Bridge2/posz.jpg',
+            'https://threejs.org/examples/textures/cube/Bridge2/negz.jpg'
+        ]);
+
+        // Appliquer la carte d'environnement à la scène
+        scene.environment = environmentMap;
+
+        // Matériau matcap à partir d'une image
+        const goldMaterial = new THREE.MeshMatcapMaterial({
+            matcap: new THREE.TextureLoader().load('dist/image.png')
+        });
+
+        // Matériau jaune
+        const yellowMaterial = new THREE.MeshStandardMaterial({
+            color: 0xFBBC31,
+            envMap: environmentMap
+        });
+
+        // Création de la géométrie de la carte
+        const geometry = new THREE.BoxGeometry(850, 550, 10);
+        const geometry2 = new THREE.BoxGeometry(860, 560, 5);
+
+        const cube1 = new THREE.Mesh(geometry, goldMaterial);
+        const cube2 = new THREE.Mesh(geometry2, yellowMaterial);
+
+        // Création des faces avant et arrière
+        const faceGeometry = new THREE.PlaneGeometry(850, 550);
+
+        const face_avant = new THREE.TextureLoader().load('dist/avant.png');
+        const material_avant = new THREE.MeshBasicMaterial({ map: face_avant, transparent: true });
+
+        const face_arriere = new THREE.TextureLoader().load('dist/arriere.png');
+        const material_arriere = new THREE.MeshBasicMaterial({ map: face_arriere, transparent: true });
+
+        const faceMesh_avant = new THREE.Mesh(faceGeometry, material_avant);
+        faceMesh_avant.position.z = 7;
+
+        const faceMesh_arriere = new THREE.Mesh(faceGeometry, material_arriere);
+        faceMesh_arriere.position.z = -7;
+        faceMesh_arriere.rotation.y = Math.PI;
+
+        const carte = new THREE.Group();
+        carte.add(cube1);
+        carte.add(cube2);
+        carte.add(faceMesh_avant);
+        carte.add(faceMesh_arriere);
+
+        scene.add(carte);
+
+        // function resizeCanvasToDisplaySize() {
+        //     const canvas = renderer.domElement;
+        //     const canvas_width = canvas.clientWidth;
+        //     const canvas_height = canvas.clientHeight;
+
+        //     const container = document.querySelector('.carte3D');
+        //     const container_width = container.clientWidth;
+        //     const container_height = container.clientHeight;
+
+        //     renderer.setSize(container_width, container_height, false);
+        //     camera.aspect = container_width / container_height;
+        //     camera.updateProjectionMatrix();
+        // }
+
+        function animate() {
+            // resizeCanvasToDisplaySize();
+            carte.rotation.y += 0.005;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+    </script>
 </body>
 </html>

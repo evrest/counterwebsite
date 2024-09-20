@@ -171,6 +171,34 @@
             height: 35%;
         }
 
+        /* Media Queries pour iPad et ordinateurs */
+        @media screen and (min-width: 768px) {
+            /* Styles pour iPad et écrans plus grands */
+            .principal_button {
+                height: 40px;
+                width: 200px;
+                font-size: 20px;
+            }
+
+            .carte3D {
+                height: 400px;
+                width: 900px;
+            }
+
+            #mail_input {
+                width: 200px;
+                height: 20px;
+                font-size: 20px;
+            }
+
+
+        }
+
+        @media screen and (min-width: 1024px) {
+            /* Styles pour ordinateurs de bureau */
+            
+        }
+
     </style>
 </head>
 <body>
@@ -281,7 +309,7 @@
 
                     function animate() {
                         resizeCanvasToDisplaySize();
-                        carte.rotation.y += 0.005;
+                        carte.rotation.y += 0.01;
                         renderer.render(scene, camera);
                         requestAnimationFrame(animate);
                     }
