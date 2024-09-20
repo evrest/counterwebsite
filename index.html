@@ -61,11 +61,6 @@
             align-items: center;
         }
 
-        .carte3D canvas {
-            width: 100%;
-            height: 100%;
-            display: block; /* Empêche les barres de défilement */
-        }
 
         .en_savoir_plus {
             display: flex;
@@ -266,15 +261,16 @@
 
                     function resizeCanvasToDisplaySize() {
                         const canvas = renderer.domElement;
-                        const container = document.querySelector('.carte3D');
-                        const width = container.clientWidth;
-                        const height = container.clientHeight;
+                        const canvas_width = canvas.clientWidth;
+                        const canvas_height = canvas.clientHeight;
 
-                        if (canvas.width !== width || canvas.height !== height) {
-                            renderer.setSize(width, height, false);
-                            camera.aspect = width / height;
-                            camera.updateProjectionMatrix();
-                        }
+                        const container = document.querySelector('.carte3D');
+                        const container_width = container.clientWidth;
+                        const container_height = container.clientHeight;
+
+                        renderer.setSize(container_width, container_height, false);
+                        camera.aspect = container_width / container_height;
+                        camera.updateProjectionMatrix();
                     }
 
                     function animate() {
