@@ -1,0 +1,110 @@
+<!-- Basic HTML page add styles-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Counter Website</title>
+    <!-- Import Poppins text -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #2D2E32;
+            height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin:0;
+            height: 30%;
+            margin-top: 10%;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content:space-between;
+            height: 100vh;
+        }
+/* 
+        .explication {
+            margin-bottom: 200px;
+        } */
+
+        h1 {
+            color: #fff;
+            /* margin: 20px; */
+            font-size: 90px;
+            margin: 0px;
+            text-align: center;
+            /* Poppins extrabold */
+            font-family: 'Poppins', sans-serif;
+            /* extrabold */
+            font-weight: 800;
+            color: #D97800;
+            /* font color */
+        }
+
+        h2 {
+            color: #fff;
+        }
+
+        .texte {
+            color: #fff;
+            font-size: 30px;
+            /* center text */
+            margin: 0px 30px;
+            text-align: center;
+            /* Poppins light */
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .explication {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            /* width: 100% if screen < 600 px large 600px if not */
+            height: 15%;
+        }
+
+        .carte{
+            height: 25%;
+        }
+
+        .logo{
+            height: 65%;
+        }
+
+        .nom{
+            height: 35%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <img class="logo" src="dist/Absolut-Unit-logo-design-without-bar-blanc-png.png" alt="">
+            <img class="nom" src="dist/Absolut Unit écriture png.png" alt="">
+        </div>
+        <!-- <h2>Carte Certif</h2>
+        <p>Notre première certification : "100KG Bench"</p> -->
+        <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.2/build/spline-viewer.js"></script>
+        <spline-viewer class="carte" url="https://prod.spline.design/S28sCPWzmVINH4hu/scene.splinecode"></spline-viewer>
+        <div class="explication">
+            <!-- <h1>Bientôt disponible</h1> -->
+            <p class="texte">
+                Le 100KG au bench est réussi ou vous en êtes pas loin ? La carte certification certifiant votre exploit
+                arrive bientôt !
+            </p>
+        </div>
+    </div>
+</body>
+</html>
