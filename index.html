@@ -61,6 +61,12 @@
             align-items: center;
         }
 
+        .carte3D canvas {
+            width: 100%;
+            height: 100%;
+            display: block; /* Empêche les barres de défilement */
+        }
+
         .en_savoir_plus {
             display: flex;
             flex-direction: column;
@@ -260,12 +266,15 @@
 
                     function resizeCanvasToDisplaySize() {
                         const canvas = renderer.domElement;
-                        const width = canvas.clientWidth;
-                        const height = canvas.clientHeight;
+                        const container = document.querySelector('.carte3D');
+                        const width = container.clientWidth;
+                        const height = container.clientHeight;
 
-                        renderer.setSize(width, height, false);
-                        camera.aspect = width / height;
-                        camera.updateProjectionMatrix();
+                        if (canvas.width !== width || canvas.height !== height) {
+                            renderer.setSize(width, height, false);
+                            camera.aspect = width / height;
+                            camera.updateProjectionMatrix();
+                        }
                     }
 
                     function animate() {
@@ -315,13 +324,18 @@
         enSavoirPlusBtn.addEventListener('click', function() {
             enSavoirPlusContent.classList.toggle('active');
             // Optionnel : changer le texte du bouton
-            if (enSavoirPlusContent.classList.contains('active')) {
-                enSavoirPlusBtn.textContent = 'Réduire';
-                document.querySelector('.carte3D').style.height = '40%';
-            } else {
-                enSavoirPlusBtn.textContent = 'En savoir plus';
-                document.querySelector('.carte3D').style.height = '55%';
-            }
+            // if (enSavoirPlusContent.classList.contains('active')) {
+            //     enSavoirPlusBtn.textContent = 'Réduire';
+            //     document.querySelector('.carte3D').style.height = '40%';
+            // } else {
+            //     enSavoirPlusBtn.textContent = 'En savoir plus';
+            //     document.querySelector('.carte3D').style.height = '55%';
+            // }
+
+            // New : not possible to reduce (not usefull)
+            // remove enSavoirPlusBtn
+            enSavoirPlusBtn.style.display = 'none';
+            document.querySelector('.carte3D').style.height = '40%';
         });
     </script>
 
