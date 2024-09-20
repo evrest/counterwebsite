@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Projet Three.js - Deux Faces Dorées</title>
+    <style>
+        body {
+            background-color: #2D2E32;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            height: 15%;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100vh;
+        }
+
+        .principal_button {
+            font-weight: 500;
+            font-size: 40px;
+            color: white;
+            line-height: normal;
+            letter-spacing: normal;
+            width: auto;
+            height: 100px;
+            width: 300px;
+            background-color: #FFA500;
+            box-shadow: none;
+            border: 1px solid transparent;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .middle_container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70%;
+            width: 100%;
+        }
+
+        .carte3D {
+            width: 100%;
+            height: 60%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .en_savoir_plus {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 40%;
+            width: 100%;
+        }
+
+        .en_savoir_plus_content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .en_savoir_plus_content.active {
+            display: block;
+            opacity: 1;
+            height: auto;
+        }
+
+        p {
+            color: #fff;
+            font-size: 40px;
+            margin: 30px 30px;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        form {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        #mail_input {
+            width: 400px;
+            height: 70px;
+            font-size: 30px;
+            margin: 20px;
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid #FFA500;
+        }
+
+        .social_media {
+            display: flex;
+            justify-content: center;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            height: 10%;
+        }
+
+        .social_media_logo {
+            width: 100px;
+            height: 100px;
+            padding: 0 50px;
+        }
+
+        h1 {
+            color: #D97800;
+            font-size: 90px;
+            margin: 0px;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+        }
+
+        .texte {
+            color: #fff;
+            font-size: 30px;
+            margin: 0px 30px;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+        }
+
+        .explication {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            height: 15%;
+        }
+
+        .carte {
+            height: 25%;
+        }
+
+        .logo {
+            height: 65%;
+        }
+
+        .nom {
+            height: 35%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <img class="logo" src="dist/Absolut-Unit-logo-design-without-bar-blanc-png.png" alt="">
+            <img class="nom" src="dist/Absolut Unit écriture png.png" alt="">
+        </div>
+
+        <div class="middle_container">
+            <div class="carte3D">
+                <!-- Votre script principal en tant que module ES -->
+                <script type="module">
+                    // Importation de Three.js en tant que module
+                    import * as THREE from 'https://unpkg.com/three@0.153.0/build/three.module.js';
+
+                    // Initialisation de la scène, de la caméra et du rendu
+                    const scene = new THREE.Scene();
+                    scene.background = new THREE.Color(0x2D2E32); // Fond de la même couleur que le body
+
+                    const camera = new THREE.PerspectiveCamera(
+                        75, window.innerWidth / window.innerHeight, 0.1, 5000
+                    );
+                    camera.position.z = 800;
+
+                    const container = document.querySelector('.carte3D');
+                    const renderer = new THREE.WebGLRenderer({ antialias: true });
+                    renderer.setSize(container.clientWidth, container.clientHeight);
+                    container.appendChild(renderer.domElement);
+
+                    // Ajout de lumières pour l'effet métallique
+                    const ambientLight = new THREE.AmbientLight(0x404040, 2);
+                    scene.add(ambientLight);
+
+                    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+                    directionalLight.position.set(0, 1, 1);
+                    scene.add(directionalLight);
+
+                    // Chargement de la carte d'environnement
+                    const loader = new THREE.CubeTextureLoader();
+                    const environmentMap = loader.load([
+                        'https://threejs.org/examples/textures/cube/Bridge2/posx.jpg',
+                        'https://threejs.org/examples/textures/cube/Bridge2/negx.jpg',
+                        'https://threejs.org/examples/textures/cube/Bridge2/posy.jpg',
+                        'https://threejs.org/examples/textures/cube/Bridge2/negy.jpg',
+                        'https://threejs.org/examples/textures/cube/Bridge2/posz.jpg',
+                        'https://threejs.org/examples/textures/cube/Bridge2/negz.jpg'
+                    ]);
+
+                    // Appliquer la carte d'environnement à la scène
+                    scene.environment = environmentMap;
+
+                    // Matériau matcap à partir d'une image
+                    const goldMaterial = new THREE.MeshMatcapMaterial({
+                        matcap: new THREE.TextureLoader().load('dist/image.png')
+                    });
+
+                    // Matériau jaune
+                    const yellowMaterial = new THREE.MeshStandardMaterial({
+                        color: 0xFBBC31,
+                        envMap: environmentMap
+                    });
+
+                    // Création de la géométrie de la carte
+                    const geometry = new THREE.BoxGeometry(850, 550, 10);
+                    const geometry2 = new THREE.BoxGeometry(860, 560, 5);
+
+                    const cube1 = new THREE.Mesh(geometry, goldMaterial);
+                    const cube2 = new THREE.Mesh(geometry2, yellowMaterial);
+
+                    // Création des faces avant et arrière
+                    const faceGeometry = new THREE.PlaneGeometry(850, 550);
+
+                    const face_avant = new THREE.TextureLoader().load('dist/avant.png');
+                    const material_avant = new THREE.MeshBasicMaterial({ map: face_avant, transparent: true });
+
+                    const face_arriere = new THREE.TextureLoader().load('dist/arriere.png');
+                    const material_arriere = new THREE.MeshBasicMaterial({ map: face_arriere, transparent: true });
+
+                    const faceMesh_avant = new THREE.Mesh(faceGeometry, material_avant);
+                    faceMesh_avant.position.z = 7;
+
+                    const faceMesh_arriere = new THREE.Mesh(faceGeometry, material_arriere);
+                    faceMesh_arriere.position.z = -7;
+                    faceMesh_arriere.rotation.y = Math.PI;
+
+                    const carte = new THREE.Group();
+                    carte.add(cube1);
+                    carte.add(cube2);
+                    carte.add(faceMesh_avant);
+                    carte.add(faceMesh_arriere);
+
+                    scene.add(carte);
+
+                    function resizeCanvasToDisplaySize() {
+                        const canvas = renderer.domElement;
+                        const width = canvas.clientWidth;
+                        const height = canvas.clientHeight;
+
+                        renderer.setSize(width, height, false);
+                        camera.aspect = width / height;
+                        camera.updateProjectionMatrix();
+                    }
+
+                    function animate() {
+                        resizeCanvasToDisplaySize();
+                        carte.rotation.y += 0.005;
+                        renderer.render(scene, camera);
+                        requestAnimationFrame(animate);
+                    }
+
+                    animate();
+
+                </script>
+            </div>
+            <div class="en_savoir_plus">
+                <button class="principal_button">En savoir plus</button>
+                <div class="en_savoir_plus_content">
+                    <p>Une nouvelle ère de performance se profile. Une carte unique, réservée à ceux qui repoussent les limites. 
+                        
+                        <br><br><b>Bientôt disponible.</b>
+
+                        <br>Restez connectés, votre force sera bientôt reconnue.</p>
+                    <form action="">
+                        <input type="text" id="mail_input" placeholder="Votre adresse mail">
+                        <button class="principal_button">S'inscrire</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="social_media">
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/absolutunitfrance/">
+                <img class="social_media_logo" src="dist/insta.png" alt="instagram">
+            </a>
+            <!-- Tiktok -->
+            <a href="https://www.tiktok.com/@absolutunitfrance?lang=fr">
+                <img class="social_media_logo" src="dist/tiktok.png" alt="tiktok">
+            </a>
+        </div>
+    </div>
+
+    <!-- Ajout du script pour le bouton "En savoir plus" -->
+    <script>
+        const enSavoirPlusBtn = document.querySelector('.en_savoir_plus .principal_button');
+        const enSavoirPlusContent = document.querySelector('.en_savoir_plus_content');
+
+        enSavoirPlusBtn.addEventListener('click', function() {
+            enSavoirPlusContent.classList.toggle('active');
+            // Optionnel : changer le texte du bouton
+            if (enSavoirPlusContent.classList.contains('active')) {
+                enSavoirPlusBtn.textContent = 'Réduire';
+            } else {
+                enSavoirPlusBtn.textContent = 'En savoir plus';
+            }
+        });
+    </script>
+
+</body>
+</html>
