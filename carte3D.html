@@ -1,0 +1,154 @@
+<!-- Basic HTML page add styles-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Counter Website</title>
+    <!-- Import Poppins text -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #2D2E32;
+            height: 100vh;
+        }
+
+    </style>
+</head>
+<body>
+    <script type="module">
+        // Importation de Three.js en tant que module
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // import { GLTFLoader } from 'https://unpkg.com/three@0.153.0/examples/jsm/loaders/GLTFLoader.js';
+
+        // Initialisation de la scène, de la caméra et du rendu
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x00ff00); // Fond de la même couleur que le body
+
+        const camera = new THREE.PerspectiveCamera(
+            75, window.innerWidth / window.innerHeight, 0.1, 5000
+        );
+        camera.position.z = 900;
+
+        // const container = document.querySelector('.carte3D');
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        // renderer.setSize(container.clientWidth, container.clientHeight);
+        // container.appendChild(renderer.domElement);
+
+        // Ajout de lumières pour l'effet métallique
+        const ambientLight = new THREE.AmbientLight(0xffffff, 100);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(0, 0, 200);
+        scene.add(directionalLight);
+
+        // Chargement de la carte d'environnement
+        const loader = new THREE.CubeTextureLoader();
+        const environmentMap = loader.load([
+            'https://threejs.org/examples/textures/cube/Bridge2/posx.jpg',
+            'https://threejs.org/examples/textures/cube/Bridge2/negx.jpg',
+            'https://threejs.org/examples/textures/cube/Bridge2/posy.jpg',
+            'https://threejs.org/examples/textures/cube/Bridge2/negy.jpg',
+            'https://threejs.org/examples/textures/cube/Bridge2/posz.jpg',
+            'https://threejs.org/examples/textures/cube/Bridge2/negz.jpg'
+        ]);
+
+        // Appliquer la carte d'environnement à la scène
+        scene.environment = environmentMap;
+
+        // Matériau matcap à partir d'une image
+        const goldMaterial = new THREE.MeshMatcapMaterial({
+            matcap: new THREE.TextureLoader().load('dist/image.png')
+        });
+
+        // Matériau jaune
+        const yellowMaterial = new THREE.MeshStandardMaterial({
+            color: 0xFBBC31,
+            envMap: environmentMap
+        });
+
+        // Création de la géométrie de la carte
+        const geometry = new THREE.BoxGeometry(850, 550, 10);
+        const geometry2 = new THREE.BoxGeometry(860, 560, 5);
+        
+        const carte = new THREE.Group();
+        // FOR Certif card:
+        // const cube1 = new THREE.Mesh(geometry, goldMaterial);
+        // const cube2 = new THREE.Mesh(geometry2, yellowMaterial);
+
+        // For membership card:
+        const cube1 = new THREE.Mesh(geometry, yellowMaterial);
+        const cube2 = new THREE.Mesh(geometry2, yellowMaterial);
+
+        // Création des faces avant et arrière
+        const faceGeometry = new THREE.PlaneGeometry(850, 550);
+
+        const face_avant = new THREE.TextureLoader().load('dist/avant.png');
+        const material_avant = new THREE.MeshBasicMaterial({ map: face_avant, transparent: true });
+
+        const face_arriere = new THREE.TextureLoader().load('dist/arriere.png');
+        const material_arriere = new THREE.MeshBasicMaterial({ map: face_arriere, transparent: true });
+
+        // Load a glb file
+        const threedloader = new GLTFLoader();
+        threedloader.load( '/dist/full_membership_card12.glb', function ( gltf )
+        {
+            const sword = gltf.scene;  // sword 3D object is loaded
+            sword.scale.set(30, 30, 30);
+            // sword.rotation.y = Math.PI/2;
+            // sword.traverse((obj) => {
+            // if(obj instanceof THREE.Mesh){
+            //     obj.material = goldMaterial;
+            //     }
+            // }
+            // sword.rotation.x= Math.PI/2;
+            // sword.position.z = 7;
+            carte.add(sword);
+        } );
+
+        const faceMesh_avant = new THREE.Mesh(faceGeometry, material_avant);
+        faceMesh_avant.position.z = 7;
+
+        const faceMesh_arriere = new THREE.Mesh(faceGeometry, material_arriere);
+        faceMesh_arriere.position.z = -7;
+        faceMesh_arriere.rotation.y = Math.PI;
+
+        // carte.add(cube1);
+        // carte.add(cube2);
+        // carte.add(faceMesh_avant);
+        // carte.add(faceMesh_arriere);
+        // carte.add()
+
+        scene.add(carte);
+
+        // function resizeCanvasToDisplaySize() {
+        //     const canvas = renderer.domElement;
+        //     const canvas_width = canvas.clientWidth;
+        //     const canvas_height = canvas.clientHeight;
+
+        //     const container = document.querySelector('.carte3D');
+        //     const container_width = container.clientWidth;
+        //     const container_height = container.clientHeight;
+
+        //     renderer.setSize(container_width, container_height, false);
+        //     camera.aspect = container_width / container_height;
+        //     camera.updateProjectionMatrix();
+        // }
+
+        function animate() {
+            // resizeCanvasToDisplaySize();
+            carte.rotation.y += 0.005;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+    </script>
+</body>
+</html>
